@@ -1,142 +1,133 @@
 import React, { useState } from 'react';
 
 const UploadCard = () => {
-    const [mainImage, setMainImage] = useState(null);
+    const [processedImage, setProcessedImage] = useState(null);
     const [customBG, setCustomBG] = useState(null);
     const [isPremium, setIsPremium] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // Image Upload Handlers
-    const handleMainImage = (e) => {
-        if (e.target.files[0]) {
-            setMainImage(URL.createObjectURL(e.target.files[0]));
-        }
+    const BACKEND_URL = "https://snaperase-backend.onrender.com";
+
+    const handleUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setLoading(true);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+            const base64Data = reader.result.split(',')[1];
+            try {
+                const res = await fetch(`${BACKEND_URL}/remove-bg`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64Data }),
+                });
+                const data = await res.json();
+                if (data.image) {
+                    setProcessedImage(`data:image/png;base64,${data.image}`);
+                }
+            } catch (err) {
+                console.error("Connection Error");
+            }
+            setLoading(false);
+        };
     };
 
-    const handleBGUpload = (e) => {
+    const handleBG = (e) => {
         if (e.target.files[0]) {
             setCustomBG(URL.createObjectURL(e.target.files[0]));
         }
     };
 
-    // Download Logic with Quality Control
     const downloadImage = () => {
+        if (!processedImage) return;
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const img = new Image();
-        img.src = mainImage;
+        img.src = processedImage;
 
         img.onload = () => {
-            // Premium user gets 4K (3840px width), Free user gets standard width
-            const scaleFactor = isPremium ? 3840 / img.width : 1;
-            canvas.width = img.width * scaleFactor;
-            canvas.height = img.height * scaleFactor;
+            const width = isPremium ? 3840 : img.width;
+            const height = (img.height / img.width) * width;
+            canvas.width = width;
+            canvas.height = height;
 
             if (customBG) {
                 const bg = new Image();
                 bg.src = customBG;
                 bg.onload = () => {
-                    ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    applyWatermark(ctx, canvas);
-                    executeDownload(canvas);
+                    ctx.drawImage(bg, 0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    finishDownload(canvas);
                 };
             } else {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                applyWatermark(ctx, canvas);
-                executeDownload(canvas);
+                ctx.drawImage(img, 0, 0, width, height);
+                finishDownload(canvas);
             }
         };
     };
 
-    const applyWatermark = (ctx, canvas) => {
+    const finishDownload = (canvas) => {
+        const ctx = canvas.getContext("2d");
         if (!isPremium) {
-            ctx.font = `${canvas.width / 30}px Arial`;
-            ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-            ctx.fillText("Snaperase - Free Version", canvas.width * 0.6, canvas.height - 40);
+            ctx.font = `${canvas.width / 25}px Arial`;
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.fillText("Snaperase - Free", canvas.width * 0.5, canvas.height - 50);
         }
-    };
-
-    const executeDownload = (canvas) => {
         const link = document.createElement("a");
-        link.download = isPremium ? "snaperase-4K.png" : "snaperase-standard.png";
+        link.download = isPremium ? "snaperase-4k.png" : "snaperase-free.png";
         link.href = canvas.toDataURL("image/png", 1.0);
         link.click();
     };
 
     return (
-        <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh', paddingBottom: '50px' }}>
-            {/* Header */}
-            <header style={{ backgroundColor: '#222', color: '#fff', padding: '20px', textAlign: 'center' }}>
-                <h1>Snaperase AI Photo Editor</h1>
-                <p>Background Remover & 4K Image Upscaler</p>
-            </header>
+        <div style={{ textAlign: 'center', padding: '40px', fontFamily: 'Arial', backgroundColor: '#fff', minHeight: '100vh' }}>
+            <h1 style={{ color: '#222', marginBottom: '10px' }}>Snaperase AI</h1>
+            <p style={{ color: '#666', marginBottom: '30px' }}>Remove Background & Upgrade to 4K Quality</p>
 
-            {/* Editor Section */}
-            <div style={{ maxWidth: '800px', margin: '40px auto', backgroundColor: '#fff', padding: '30px', borderRadius: '15px', boxShadow: '0 5px 20px rgba(0,0,0,0.1)', textAlign: 'center' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '30px', flexWrap: 'wrap', gap: '10px' }}>
-                    <div>
-                        <label style={{ fontWeight: 'bold', display: 'block' }}>1. Upload Photo</label>
-                        <input type="file" onChange={handleMainImage} accept="image/*" />
-                    </div>
-                    <div>
-                        <label style={{ fontWeight: 'bold', display: 'block' }}>2. Add Background</label>
-                        <input type="file" onChange={handleBGUpload} accept="image/*" />
-                    </div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
+                <div>
+                    <label style={{ display: 'block', fontWeight: 'bold' }}>Step 1: Photo</label>
+                    <input type="file" onChange={handleUpload} accept="image/*" />
                 </div>
-
-                <div id="preview-area" style={{ 
-                    position: 'relative', width: '100%', height: '400px', backgroundColor: '#eee', borderRadius: '10px', overflow: 'hidden',
-                    backgroundImage: `url(${customBG})`, backgroundSize: 'cover', backgroundPosition: 'center', border: '2px dashed #ccc'
-                }}>
-                    {mainImage ? (
-                        <img src={mainImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                    ) : (
-                        <p style={{ marginTop: '180px', color: '#888' }}>Photo Preview Area</p>
-                    )}
-                    {!isPremium && mainImage && (
-                        <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '5px 12px', fontSize: '12px', borderRadius: '4px' }}>
-                            Snaperase - Free
-                        </div>
-                    )}
-                </div>
-
-                <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-                    <button onClick={downloadImage} style={{ padding: '15px 30px', backgroundColor: '#e91e63', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-                        Download {isPremium ? "4K Ultra HD" : "Standard Quality"}
-                    </button>
+                <div>
+                    <label style={{ display: 'block', fontWeight: 'bold' }}>Step 2: Background</label>
+                    <input type="file" onChange={handleBG} accept="image/*" />
                 </div>
             </div>
 
-            {/* Pricing Table Section */}
-            <div style={{ marginTop: '60px' }}>
-                <h2 style={{ textAlign: 'center', color: '#333' }}>Upgrade Your Experience</h2>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', padding: '20px' }}>
-                    
-                    {/* Free Plan */}
-                    <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '25px', width: '260px', backgroundColor: '#fff' }}>
-                        <h3>Free User</h3>
-                        <ul style={{ textAlign: 'left', fontSize: '14px', lineHeight: '2' }}>
-                            <li>✅ BG Removal</li>
-                            <li>❌ Watermark</li>
-                            <li>❌ Standard Quality</li>
-                            <li>❌ Ads Included</li>
-                        </ul>
-                    </div>
+            <div style={{ 
+                position: 'relative', width: '100%', maxWidth: '500px', height: '400px', 
+                margin: '0 auto', border: '1px solid #ddd', borderRadius: '12px',
+                backgroundImage: `url(${customBG})`, backgroundSize: 'cover', backgroundPosition: 'center',
+                backgroundColor: '#fdfdfd', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+                {loading ? <p>AI Processing...</p> : (
+                    processedImage ? <img src={processedImage} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="Preview" /> : <p>No Image Uploaded</p>
+                )}
+            </div>
 
-                    {/* Premium Plan */}
-                    <div style={{ border: '2px solid #007bff', borderRadius: '10px', padding: '25px', width: '260px', backgroundColor: '#fff', boxShadow: '0 5px 15px rgba(0,123,255,0.2)' }}>
-                        <h3 style={{ color: '#007bff' }}>Pro Plan (4K)</h3>
-                        <ul style={{ textAlign: 'left', fontSize: '14px', lineHeight: '2' }}>
-                            <li>✅ Everything in Free</li>
-                            <li>✅ **No Watermark**</li>
-                            <li>✅ **4K Ultra Quality**</li>
-                            <li>✅ **AI Photo Enhancer**</li>
-                        </ul>
-                        <button onClick={() => setIsPremium(true)} style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-                            Go Pro
-                        </button>
-                    </div>
+            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '15px' }}>
+                <button onClick={downloadImage} style={{ padding: '12px 25px', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    Download {isPremium ? "4K HD" : "Standard"}
+                </button>
+                <button onClick={() => setIsPremium(!isPremium)} style={{ padding: '12px 25px', backgroundColor: isPremium ? '#4CAF50' : '#007bff', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    {isPremium ? "Pro Active" : "Upgrade to Pro"}
+                </button>
+            </div>
 
+            <div style={{ marginTop: '50px', borderTop: '1px solid #eee', paddingTop: '30px' }}>
+                <h3>Pricing Plans</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
+                    <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px', width: '200px' }}>
+                        <h4>Free</h4>
+                        <p style={{ fontSize: '12px' }}>Standard Quality<br/>Watermark Included<br/>With Ads</p>
+                    </div>
+                    <div style={{ padding: '20px', border: '2px solid #007bff', borderRadius: '8px', width: '200px' }}>
+                        <h4 style={{ color: '#007bff' }}>Pro</h4>
+                        <p style={{ fontSize: '12px' }}>4K Ultra Quality<br/>No Watermark<br/>No Ads</p>
+                    </div>
                 </div>
             </div>
         </div>
