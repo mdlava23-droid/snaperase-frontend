@@ -112,5 +112,5 @@ const UploadCard = () => {
     );
 };
 
-export default UploadCard;
+window.UploadCard = UploadCard;
 
