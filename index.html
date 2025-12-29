@@ -3,45 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snaperase AI - Background Remover</title>
+    <title>Snaperase AI - Professional Background Remover</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --dark: #0f172a; --accent: #f59e0b; }
-        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: var(--dark); overflow-x: hidden; }
+        :root { --primary: #4f46e5; --dark: #0f172a; --accent: #f59e0b; --bg: #f8fafc; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--dark); }
         
-        /* Navigation */
-        nav { background: #ffffff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
-        
-        /* Tool Section */
-        .container { max-width: 900px; margin: 40px auto; padding: 20px; text-align: center; }
-        .tool-card { background: #ffffff; padding: 40px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-        
-        /* Upload Area */
-        .upload-box { border: 2.5px dashed #cbd5e1; padding: 60px; border-radius: 24px; background: #fdfdfd; cursor: pointer; transition: 0.3s; position: relative; }
-        .upload-box:hover { border-color: var(--primary); background: #f5f3ff; }
+        /* Navbar */
+        nav { background: #fff; padding: 15px 6%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+        .logo { font-size: 1.6rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .welcome-msg { font-size: 14px; font-weight: 600; color: #64748b; }
+
+        /* Main Container */
+        .container { max-width: 1000px; margin: 60px auto; padding: 0 20px; text-align: center; }
+        .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
+        .hero-sub { color: #64748b; font-size: 1.2rem; margin-bottom: 40px; }
+
+        /* Tool Card */
+        .tool-card { background: #fff; padding: 50px; border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); border: 1px solid #f1f5f9; }
+        .upload-zone { border: 2.5px dashed #cbd5e1; padding: 80px 20px; border-radius: 24px; background: #fafafa; cursor: pointer; transition: 0.3s; position: relative; }
+        .upload-zone:hover { border-color: var(--primary); background: #f5f3ff; }
         input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
         
         /* Preview */
-        .preview-img { max-width: 100%; max-height: 400px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 4px solid #fff; }
-        
+        .preview-container { text-align: center; }
+        .preview-img { max-width: 100%; max-height: 450px; border-radius: 20px; border: 8px solid #fff; box-shadow: 0 15px 30px rgba(0,0,0,0.1); margin-bottom: 25px; }
+
         /* Buttons */
-        .btn-main { background: var(--primary); color: #fff; padding: 16px 45px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.2s; }
-        .btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-secondary { background: #f1f5f9; color: #475569; padding: 16px 30px; border-radius: 14px; border: none; font-weight: 600; cursor: pointer; }
-        
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); }
-        .modal-content { background: #ffffff; padding: 35px; border-radius: 28px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        
-        .option-card { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 18px; cursor: pointer; margin-bottom: 12px; transition: 0.2s; border: 1px solid #e2e8f0; text-align: left; background: #fff; width: 100%; }
-        .option-card.premium { border: 2px solid var(--accent); background: #fffbeb; }
-        
+        .btn-group { display: flex; justify-content: center; gap: 15px; }
+        .btn-main { background: var(--primary); color: #fff; padding: 18px 45px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+        .btn-reset { background: #f1f5f9; color: #475569; padding: 18px 30px; border-radius: 16px; border: none; font-weight: 600; cursor: pointer; }
+
+        /* Modal */
+        .modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
+        .modal-box { background: #fff; padding: 40px; border-radius: 30px; width: 90%; max-width: 480px; text-align: center; position: relative; }
+        .option-item { display: flex; justify-content: space-between; align-items: center; padding: 22px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; cursor: pointer; transition: 0.2s; text-align: left; background: #fff; width: 100%; }
+        .option-item:hover { border-color: var(--primary); }
+        .option-item.premium { border: 2.5px solid var(--accent); background: #fffbeb; }
+
         /* Footer */
-        footer { margin-top: 80px; padding: 50px; background: #fff; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #f1f5f9; }
+        footer { margin-top: 100px; padding: 60px; background: #fff; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -52,90 +57,84 @@
 
         const App = () => {
             const [previewUrl, setPreviewUrl] = useState(null);
-            const [showDownloadModal, setShowDownloadModal] = useState(false);
+            const [showDownloadOptions, setShowDownloadOptions] = useState(false);
             const [showPayment, setShowPayment] = useState(false);
 
-            const handleFileChange = (e) => {
+            const onFileSelect = (e) => {
                 const file = e.target.files[0];
-                if (file) {
-                    setPreviewUrl(URL.createObjectURL(file));
-                }
+                if (file) { setPreviewUrl(URL.createObjectURL(file)); }
             };
 
             return (
                 <div>
                     <nav>
-                        <a href="/" className="logo">Snaperase AI</a>
-                        <div style={{fontWeight: '600', color: '#64748b'}}>Welcome, Beb!</div>
+                        <a href="#" className="logo">Snaperase AI</a>
+                        <div className="welcome-msg">Welcome, Beb!</div>
                     </nav>
 
                     <div className="container">
+                        <h1 className="hero-title">Instant AI Background Remover</h1>
+                        <p className="hero-sub">Remove backgrounds in seconds with 100% accuracy</p>
+
                         <div className="tool-card">
-                            <h1 style={{fontSize: '2.5rem', fontWeight: '800', marginBottom: '10px'}}>Remove Background</h1>
-                            <p style={{color: '#64748b', marginBottom: '40px'}}>Instant, AI-powered background removal</p>
-                            
                             {!previewUrl ? (
-                                <div className="upload-box">
-                                    <input type="file" accept="image/*" onChange={handleFileChange} />
-                                    <div style={{fontSize: '50px', marginBottom: '15px'}}>📁</div>
-                                    <p style={{fontWeight: '700', fontSize: '1.2rem', margin: '0'}}>Upload Image</p>
-                                    <p style={{fontSize: '14px', color: '#94a3b8', marginTop: '5px'}}>Supports JPG, PNG, JPEG</p>
+                                <div className="upload-zone">
+                                    <input type="file" accept="image/*" onChange={onFileSelect} />
+                                    <div style={{fontSize: '60px', marginBottom: '20px'}}>🖼️</div>
+                                    <h3 style={{margin: '0', fontSize: '1.4rem'}}>Upload your image</h3>
+                                    <p style={{color: '#94a3b8', marginTop: '8px'}}>Supports PNG, JPG, JPEG</p>
                                 </div>
                             ) : (
-                                <div>
-                                    <img src={previewUrl} className="preview-img" alt="Uploaded Content" />
-                                    <div style={{display: 'flex', justifyContent: 'center', gap: '15px'}}>
-                                        <button className="btn-main" onClick={() => setShowDownloadModal(true)}>Download Result</button>
-                                        <button className="btn-secondary" onClick={() => setPreviewUrl(null)}>Try Another</button>
+                                <div className="preview-container">
+                                    <img src={previewUrl} className="preview-img" alt="Result" />
+                                    <div className="btn-group">
+                                        <button className="btn-main" onClick={() => setShowDownloadOptions(true)}>Download Image</button>
+                                        <button className="btn-reset" onClick={() => setPreviewUrl(null)}>Try Another</button>
                                     </div>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Quality Selection Modal */}
-                    {showDownloadModal && (
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                <h2 style={{fontSize: '1.5rem', marginBottom: '10px'}}>Download Image</h2>
-                                <p style={{color: '#64748b', fontSize: '14px', marginBottom: '30px'}}>Choose your preferred download quality</p>
+                    {/* Download Modal */}
+                    {showDownloadOptions && (
+                        <div className="modal-bg">
+                            <div className="modal-box">
+                                <h2 style={{fontSize: '1.6rem', marginBottom: '10px'}}>Choose Quality</h2>
+                                <p style={{color: '#64748b', marginBottom: '30px'}}>Select how you want to download your file</p>
                                 
-                                <button className="option-card" onClick={() => alert('Starting Standard Download...')}>
+                                <button className="option-item" onClick={() => alert('Downloading Standard Quality (Free)...')}>
                                     <div>
-                                        <div style={{fontWeight: '700'}}>Standard Resolution</div>
-                                        <div style={{fontSize: '12px', color: '#64748b'}}>Free Download (Includes Ads)</div>
+                                        <div style={{fontWeight: '800', fontSize: '1rem'}}>Standard Quality</div>
+                                        <div style={{fontSize: '12px', color: '#64748b'}}>Free Download with Ads</div>
                                     </div>
                                     <div style={{color: '#10b981', fontWeight: '800'}}>FREE</div>
                                 </button>
 
-                                <button className="option-card premium" onClick={() => setShowPayment(true)}>
+                                <button className="option-item premium" onClick={() => setShowPayment(true)}>
                                     <div>
-                                        <div style={{fontWeight: '700'}}>4K Ultra AI Quality</div>
-                                        <div style={{fontSize: '12px', color: '#64748b'}}>Enhanced Sharpness + High Res</div>
+                                        <div style={{fontWeight: '800', fontSize: '1rem'}}>4K Ultra HD AI</div>
+                                        <div style={{fontSize: '12px', color: '#64748b'}}>Crystal Clear + High Res</div>
                                     </div>
-                                    <div style={{color: var(--accent), fontWeight: '800'}}>PRO</div>
+                                    <div style={{color: '#f59e0b', fontWeight: '800'}}>PREMIUM</div>
                                 </button>
                                 
-                                <button style={{marginTop: '20px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer'}} onClick={() => setShowDownloadModal(false)}>Cancel</button>
+                                <button style={{marginTop: '20px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontWeight: '600'}} onClick={() => setShowDownloadOptions(false)}>Cancel</button>
                             </div>
                         </div>
                     )}
 
                     {/* Payment Modal */}
                     {showPayment && (
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                <div style={{fontSize: '40px', marginBottom: '15px'}}>💎</div>
-                                <h2 style={{marginBottom: '10px'}}>Unlock 4K Features</h2>
-                                <p style={{fontSize: '14px', color: '#475569', lineHeight: '1.6'}}>Pay <b>59 TK</b> to <b>01629586874</b> (bKash/Nagad) to unlock premium access for 30 days.</p>
+                        <div className="modal-bg">
+                            <div className="modal-box">
+                                <div style={{fontSize: '50px', marginBottom: '15px'}}>👑</div>
+                                <h2 style={{marginBottom: '10px'}}>Go Premium</h2>
+                                <p style={{color: '#475569', fontSize: '14px', lineHeight: '1.6'}}>Pay <b>59 TK</b> to <b>01629586874</b> (bKash/Nagad) to unlock 4K downloads for 30 days.</p>
                                 
-                                <input 
-                                    type="text" 
-                                    placeholder="Enter Transaction ID" 
-                                    style={{width: '100%', padding: '16px', margin: '25px 0 15px', borderRadius: '14px', border: '1px solid #cbd5e1', boxSizing: 'border-box', fontSize: '16px', outline: 'none'}} 
-                                />
+                                <input type="text" placeholder="Enter Transaction ID" style={{width: '100%', padding: '18px', margin: '25px 0 15px', borderRadius: '15px', border: '1px solid #cbd5e1', boxSizing: 'border-box', fontSize: '16px', outline: 'none'}} />
                                 
-                                <button className="btn-main" style={{width: '100%'}} onClick={() => {alert('Payment received! Our team will verify it shortly.'); setShowPayment(false); setShowDownloadModal(false);}}>Submit Payment</button>
+                                <button className="btn-main" style={{width: '100%'}} onClick={() => {alert('Payment Submitted! Verification in progress.'); setShowPayment(false); setShowDownloadOptions(false);}}>Submit Activation</button>
                                 <button style={{marginTop: '15px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer'}} onClick={() => setShowPayment(false)}>Go Back</button>
                             </div>
                         </div>
@@ -143,7 +142,7 @@
 
                     <footer>
                         <div style={{maxWidth: '800px', margin: '0 auto'}}>
-                            <p style={{fontWeight: '700', color: '#1e293b', marginBottom: '10px'}}>Snaperase AI</p>
+                            <p style={{fontWeight: '800', color: '#1e293b', fontSize: '1.2rem', marginBottom: '15px'}}>Snaperase AI</p>
                             <p>© 2025 Snaperase AI. Managed by MD. RAYHAN ISLAM BAPPY</p>
                             <p>333 no West rampura, Dhaka 1219, Bangladesh</p>
                             <p>WhatsApp: +8801410802088 | Email: mdb79833@gmail.com</p>
