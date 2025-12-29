@@ -12,13 +12,11 @@ const Footer = () => {
       fontFamily: 'Inter, sans-serif'
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        
         <h2 style={{ color: '#fff', marginBottom: '10px' }}>Snaperase AI</h2>
         <p style={{ fontSize: '14px', marginBottom: '20px' }}>
           Professional 4K Background Remover & Image Upscaler.
         </p>
 
-        {/* AdSense Essential Links */}
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -35,7 +33,7 @@ const Footer = () => {
         <hr style={{ borderColor: '#1e293b', marginBottom: '20px' }} />
 
         <div style={{ fontSize: '12px' }}>
-          <p>© 2025 Snaperase AI. Managed by <b>MD. RAYHAN ISLAM BAPPY</b></p>
+          <p>© 2025 Snaperase AI. Managed by MD. RAYHAN ISLAM BAPPY</p>
           <p>Address: 333 no West rampura, Dhaka 1219, Bangladesh</p>
           <p>WhatsApp: +8801410802088 | Email: mdb79833@gmail.com</p>
         </div>
