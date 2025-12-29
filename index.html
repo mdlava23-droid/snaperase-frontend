@@ -1,152 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snaperase AI - Professional Background Remover</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --adobe-blue: #0265DC; --adobe-red: #FA0F00; --bg-main: #F4F4F4; --card-bg: #FFFFFF; }
-        body { margin: 0; font-family: 'Source Sans Pro', sans-serif; background-color: var(--bg-main); color: #2C2C2C; }
-        nav { background: #fff; padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E1E1E1; position: sticky; top:0; z-index:100; }
-        .logo { font-weight: 900; font-size: 1.5rem; color: var(--adobe-red); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .main-wrapper { max-width: 1200px; margin: 40px auto; padding: 40px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
-        .content-area h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
-        .content-area p { font-size: 1.25rem; color: #4B4B4B; line-height: 1.6; margin-bottom: 30px; }
-        .tool-box { background: var(--card-bg); border-radius: 24px; padding: 60px 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); border: 1px solid #FFFFFF; text-align: center; position: relative; }
-        .upload-area { border: 2px dashed #D5D5D5; border-radius: 20px; padding: 50px 20px; background: #FAFAFA; cursor: pointer; position: relative; }
-        .plus-btn { width: 70px; height: 70px; background: var(--adobe-blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; }
-        .btn-adobe { background: var(--adobe-blue); color: #fff; padding: 14px 35px; border-radius: 30px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; }
-        .preview-img { width: 100%; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); margin-bottom: 20px; background: #fff; }
-        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--adobe-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-card { background: #fff; padding: 40px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; }
-        footer { background: #2C2C2C; color: #fff; padding: 60px 5%; margin-top: 80px; text-align: center; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Snaperase — Free 3D Background Remover</title>
+
+<!-- SEO -->
+<meta name="description" content="Snaperase — Free AI Background Remover | High Quality | Instant Result | 3D Liquid Glass UI" />
+<meta name="keywords" content="snaperase, background remover, free bg remove, ai remove background, photo editor" />
+
+<!-- OG Preview -->
+<meta property="og:title" content="Snaperase — Free Background Remover">
+<meta property="og:description" content="Upload → Remove Background → Download — 100% Free">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://snaperase.pro/preview.jpg">
+<meta property="og:url" content="https://snaperase.pro">
+
+<!-- Favicon -->
+<link rel="icon" href="https://snaperase.pro/icon.png" />
+
+<style>
+body{
+  margin:0;background:#060606;font-family:Inter,system-ui;color:#fff;
+  display:flex;justify-content:center;align-items:center;min-height:100vh;
+}
+.wrapper{
+  max-width:980px;width:100%;padding:22px;
+  background:linear-gradient(145deg,#ffffff18,#ffffff05);
+  border:1px solid #ffffff25;border-radius:22px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 40px 140px #00eaff25,inset 0 0 40px #ffffff15;
+}
+
+.brand-anim{
+  text-align:center;font-size:34px;font-weight:900;
+  letter-spacing:.5px;margin-bottom:10px;
+  background:linear-gradient(90deg,#6cf,#9ff);
+  -webkit-background-clip:text;color:transparent;
+  animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%{text-shadow:0 0 10px #6cf}
+  50%{text-shadow:0 0 30px #9ff}
+  100%{text-shadow:0 0 10px #6cf}
+}
+
+.sub{text-align:center;opacity:.85;margin-bottom:18px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
+.card{
+  border:1px solid #ffffff22;border-radius:16px;padding:12px;
+  background:linear-gradient(160deg,#ffffff12,#ffffff03);
+}
+.frame{
+  aspect-ratio:1/1;border-radius:14px;overflow:hidden;
+  background:#00000060;display:flex;justify-content:center;align-items:center;
+  position:relative;transform-style:preserve-3d;
+  animation:spin 12s linear infinite;
+}
+@keyframes spin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.frame img{max-width:100%;max-height:100%}
+.btn{
+  margin-top:10px;padding:10px 14px;border-radius:10px;border:0;
+  background:#00e5ff;font-weight:700;cursor:pointer
+}
+.btn:disabled{opacity:.4}
+.loader{display:none;margin-top:6px;font-size:13px;opacity:.85}
+
+.notice{
+  margin-top:10px;font-size:12px;border:1px solid #ffb30055;
+  padding:8px;border-radius:10px;background:#ffb30010;display:none
+}
+.footer{margin-top:16px;font-size:12px;text-align:center;opacity:.9}
+.footer strong{opacity:1}
+</style>
 </head>
+
 <body>
-    <div id="root"></div>
+<div class="wrapper">
+  <div class="brand-anim">SNAPERASE — 3D Liquid-Glass Background Remover</div>
+  <div class="sub">Fully Free • High Quality • Instant Result</div>
 
-    <script type="text/babel">
-        const { useState } = React;
+  <input id="fileInput" type="file" accept="image/*" />
 
-        const App = () => {
-            const [processedImage, setProcessedImage] = useState(null);
-            const [loading, setLoading] = useState(false);
-            const [showModal, setShowModal] = useState(false);
+  <div class="grid">
+    <div class="card">
+      <h3>Before</h3>
+      <div class="frame"><img id="beforeImg"></div>
+    </div>
 
-            const handleFileUpload = async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+    <div class="card">
+      <h3>After</h3>
+      <div class="frame"><img id="afterImg"></div>
+      <button id="downloadBtn" class="btn" disabled>Download PNG</button>
+      <div id="loader" class="loader">Processing… please wait</div>
+      <div id="rateNotice" class="notice">
+        Too many requests — try again in a few seconds.
+      </div>
+    </div>
+  </div>
 
-                setLoading(true);
-                const formData = new FormData();
-                formData.append('image', file);
+  <div class="footer">
+    <strong>snaperase</strong> • Contact: +8801410802088 • Rampura, Dhaka<br>
+    Manager: MD. RAYHAN ISLAM BAPPY
+  </div>
+</div>
 
-                try {
-                    const response = await fetch('https://snaperase-backend.onrender.com/remove-bg', {
-                        method: 'POST',
-                        body: formData,
-                    });
+<script>
+const API_URL = "https://snaperase-backend.onrender.com/remove-bg";
+const fileInput = document.getElementById("fileInput");
+const beforeImg = document.getElementById("beforeImg");
+const afterImg = document.getElementById("afterImg");
+const loader = document.getElementById("loader");
+const downloadBtn = document.getElementById("downloadBtn");
+const rateNotice = document.getElementById("rateNotice");
 
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        setProcessedImage(URL.createObjectURL(blob));
-                    } else {
-                        alert("Beb, something went wrong with the server. Try again!");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    alert("Beb, could not connect to your Render backend.");
-                } finally {
-                    setLoading(false);
-                }
-            };
+// 🔹 Compress image before upload
+function compressImage(file, maxSizeKB = 900){
+  return new Promise(res=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement("canvas");
+      const scale = Math.sqrt((maxSizeKB*1024)/(file.size));
+      canvas.width = img.width*scale;
+      canvas.height = img.height*scale;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      canvas.toBlob(b=>res(b),"image/jpeg",0.9);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
 
-            const downloadImage = () => {
-                const link = document.createElement('a');
-                link.href = processedImage;
-                link.download = 'snaperase-result.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
+fileInput.addEventListener("change", async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
 
-            return (
-                <div>
-                    <nav>
-                        <a href="#" className="logo">
-                            <div style={{width:20, height:20, background:'var(--adobe-red)', borderRadius:'3px'}}></div>
-                            <span style={{color:'#000'}}>Snaperase AI</span>
-                        </a>
-                        <div style={{fontWeight:700, color:'#666'}}>Welcome, Beb!</div>
-                    </nav>
+  beforeImg.src = URL.createObjectURL(file);
+  afterImg.src = "";
+  downloadBtn.disabled = true;
+  rateNotice.style.display="none";
 
-                    <div className="main-wrapper">
-                        <div className="content-area">
-                            <h1>Free background remover.</h1>
-                            <p>Remove backgrounds from your images instantly. High-quality AI edges, crystal clear results, and Adobe-grade precision.</p>
-                        </div>
+  loader.style.display="block";
 
-                        <div className="tool-box">
-                            {loading && (
-                                <div>
-                                    <div className="loading-spinner"></div>
-                                    <p>AI is processing your image...</p>
-                                </div>
-                            )}
+  try{
+    // compress first
+    const compressed = await compressImage(file);
 
-                            {!loading && !processedImage && (
-                                <div className="upload-area">
-                                    <input type="file" style={{position:'absolute', inset:0, opacity:0, cursor:'pointer'}} onChange={handleFileUpload} />
-                                    <div className="plus-btn">+</div>
-                                    <h2 style={{margin:'0 0 10px', fontWeight:900}}>Upload your photo</h2>
-                                    <p style={{color:'#666', marginBottom:'20px'}}>PNG, JPG, or JPEG</p>
-                                    <button className="btn-adobe">Browse on device</button>
-                                </div>
-                            )}
+    const form = new FormData();
+    form.append("file", compressed); // change name if API requires
 
-                            {!loading && processedImage && (
-                                <div>
-                                    <img src={processedImage} className="preview-img" />
-                                    <div style={{display:'flex', gap:'10px', justifyContent:'center'}}>
-                                        <button className="btn-adobe" onClick={() => setShowModal(true)}>Download Result</button>
-                                        <button style={{background:'#E1E1E1', padding:'14px 25px', borderRadius:'30px', border:'none', fontWeight:700, cursor:'pointer'}} onClick={() => setProcessedImage(null)}>Try Another</button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+    const res = await fetch(API_URL,{method:"POST",body:form});
 
-                    {showModal && (
-                        <div className="modal">
-                            <div className="modal-card">
-                                <h2 style={{fontWeight:900}}>Select Quality</h2>
-                                <button style={{width:'100%', padding:'18px', borderRadius:'12px', border:'1px solid #ddd', background:'#fff', marginBottom:'12px', textAlign:'left', cursor:'pointer'}} onClick={downloadImage}>
-                                    <b>Standard Quality</b><br/><small>Free Download (Ads included)</small>
-                                </button>
-                                <button style={{width:'100%', padding:'18px', borderRadius:'12px', border:'2px solid var(--adobe-red)', background:'#FFF9F9', textAlign:'left', cursor:'pointer'}} onClick={() => alert('Beb, Payment System coming soon!')}>
-                                    <b>4K Ultra AI</b><br/><small>Pro version - Ultra High Definition</small>
-                                </button>
-                                <p style={{marginTop:'20px', cursor:'pointer', fontWeight:700}} onClick={() => setShowModal(false)}>Close</p>
-                            </div>
-                        </div>
-                    )}
+    // 🔹 Error boundary + rate-limit detect
+    if(res.status === 429){
+      rateNotice.style.display="block";
+      throw new Error("Rate limit");
+    }
+    if(!res.ok) throw new Error("API error");
 
-                    <footer>
-                        <h2 style={{color: 'var(--adobe-red)', fontWeight:900}}>Snaperase AI</h2>
-                        <p>© 2025 Snaperase AI. Managed by MD. RAYHAN ISLAM BAPPY</p>
-                    </footer>
-                </div>
-            );
-        };
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    afterImg.src = url;
+    downloadBtn.disabled = false;
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    downloadBtn.onclick = ()=>{
+      const a=document.createElement("a");
+      a.href = url;
+      a.download = "snaperase-output.png";
+      a.click();
+    };
+
+  }catch(err){
+    alert("Processing failed. Please try again.");
+    console.error(err);
+  }finally{
+    loader.style.display="none";
+  }
+});
+</script>
 </body>
 </html>
