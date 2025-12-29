@@ -1,94 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adobe Express Style - Background Remover</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Adobe+Clean:wght@400;700;900&family=Source+Sans+Pro:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --adobe-red: #FA0F00; --adobe-blue: #0265DC; --text-main: #2C2C2C; --bg-light: #F8F8F8; }
-        body { margin: 0; font-family: 'Source Sans Pro', sans-serif; background-color: #ffffff; color: var(--text-main); -webkit-font-smoothing: antialiased; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Snaperase — AI Background Remover</title>
 
-        /* Adobe Navbar */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 40px; border-bottom: 1px solid #E1E1E1; position: sticky; top: 0; background: #fff; z-index: 1000; }
-        .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 1.5rem; text-decoration: none; color: var(--adobe-red); }
-        .nav-logo span { color: #000; font-weight: 700; font-size: 1.2rem; }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-        /* Banner Section */
-        .hero-banner { display: flex; max-width: 1200px; margin: 60px auto; padding: 0 40px; align-items: center; gap: 60px; }
-        .hero-content { flex: 1; }
-        .hero-content h1 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin: 0 0 20px; letter-spacing: -1.5px; }
-        .hero-content p { font-size: 1.3rem; line-height: 1.6; color: #4B4B4B; margin-bottom: 30px; }
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:radial-gradient(circle at top,#0a0a0f,#000);
+  color:white;
+  overflow-x:hidden;
+}
 
-        /* Tool Area - 3D Layout */
-        .tool-wrapper { flex: 1; background: var(--bg-light); border-radius: 32px; padding: 60px 40px; border: 2px dashed #D5D5D5; position: relative; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .tool-wrapper:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.12); border-color: var(--adobe-blue); background: #fff; }
-        
-        .upload-trigger { position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .plus-icon { width: 80px; height: 80px; background: var(--adobe-blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 300; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(2, 101, 220, 0.3); }
-        .btn-browse { background: var(--adobe-blue); color: #fff; padding: 14px 40px; border-radius: 30px; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer; margin-top: 20px; transition: 0.2s; }
-        .btn-browse:hover { background: #014da8; }
-        
-        input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:space-between;
+  padding:16px 40px;
+  align-items:center;
+}
+.brand{
+  font-size:22px;
+  font-weight:700;
+}
+nav a{
+  color:#cfcfcf;
+  margin-left:18px;
+  text-decoration:none;
+}
 
-        /* Preview Display */
-        .image-preview { width: 100%; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); margin-bottom: 25px; border: 4px solid #fff; }
+/* HERO SECTION */
+.hero{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:40px;
+  padding:80px 40px;
+}
+h1{
+  font-size:42px;
+  line-height:1.2;
+}
+.tag{
+  color:#7dffe3;
+  font-weight:600;
+}
+.lead{
+  margin-top:12px;
+  color:#c9c9c9;
+}
 
-        /* Modal Adobe Quality */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(8px); }
-        .modal-box { background: #fff; width: 90%; max-width: 500px; padding: 45px; border-radius: 20px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.3); }
-        .download-btn { width: 100%; padding: 20px; border-radius: 14px; border: 1px solid #E1E1E1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; cursor: pointer; transition: 0.2s; }
-        .download-btn:hover { border-color: var(--adobe-blue); background: #F8FBFF; }
-        .download-btn.premium { border: 2.5px solid var(--adobe-red); background: #FFF9F9; }
+/* CTA */
+.buttons{
+  margin-top:20px;
+}
+.btn{
+  padding:12px 22px;
+  border-radius:10px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+.primary{
+  background:#00ffd5;
+  color:#000;
+}
+.outline{
+  background:transparent;
+  border:1px solid #4cffea;
+  color:#4cffea;
+}
 
-        /* Adobe Style Footer */
-        footer { background: #2C2C2C; color: #fff; padding: 80px 40px; margin-top: 100px; border-top: 8px solid var(--adobe-red); }
-        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; text-align: left; }
-        .footer-bottom { border-top: 1px solid #444; margin-top: 50px; padding-top: 30px; font-size: 13px; color: #AAA; text-align: center; }
-    </style>
+/* 3D MOCKUP CARD */
+.mockup-wrapper{
+  perspective:1200px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.mockup{
+  background:linear-gradient(145deg,#141426,#0a0a14);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;
+  padding:28px;
+  width:340px;
+  transform:rotateY(-18deg) rotateX(10deg);
+  box-shadow:0 40px 80px rgba(0,0,0,.7);
+  transition:.4s;
+}
+.mockup:hover{
+  transform:rotateY(-8deg) rotateX(4deg) scale(1.02);
+}
+
+.mockup img{
+  width:100%;
+  border-radius:14px;
+}
+
+/* GLASS UPLOAD CARD */
+.upload-card{
+  margin-top:26px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:16px;
+  padding:14px;
+  text-align:center;
+}
+
+input[type=file]{
+  margin-top:6px;
+}
+
+footer{
+  margin-top:60px;
+  text-align:center;
+  color:#777;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}
+  h1{font-size:34px;}
+}
+</style>
 </head>
+
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState } = React;
+<nav>
+  <div class="brand">Snaperase</div>
+  <div>
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#">Contact</a>
+  </div>
+</nav>
 
-        const App = () => {
-            const [img, setImg] = useState(null);
-            const [modal, setModal] = useState(false);
-            const [pay, setPay] = useState(false);
+<section class="hero">
 
-            const onUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) setImg(URL.createObjectURL(file));
-            };
+  <div>
+    <span class="tag">AI Background Remover</span>
+    <h1>Remove Backgrounds in Seconds — High-Quality, Clean & Professional</h1>
+    <p class="lead">
+      Upload your photo and let Snaperase instantly remove the background
+      using AI. Perfect cut-outs for e-commerce, portraits & branding.
+    </p>
 
-            return (
-                <div>
-                    <nav>
-                        <a href="#" className="nav-logo">
-                            <div style={{width: 24, height:
-                            </div>
-                        </div>
-                    )}
+    <div class="buttons">
+      <button class="btn primary">Upload Image</button>
+      <button class="btn outline">Try Demo</button>
+    </div>
 
-                    <footer>
-                        <div style={{maxWidth: '1000px', margin: '0 auto'}}>
-                            <h3 style={{color: '#000', fontWeight: '900'}}>Snaperase AI</h3>
-                            <p>© 2025 Snaperase AI. Managed by MD. RAYHAN ISLAM BAPPY</p>
-                            <p>333 no West rampura, Dhaka 1219, Bangladesh</p>
-                            <p>Support: +8801410802088 | mdb79833@gmail.com</p>
-                        </div>
-                    </footer>
-                </div>
-            );
-        };
+    <div class="upload-card">
+      <p>Select an image to preview result</p>
+      <input type="file" id="fileInput" />
+    </div>
+  </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+  <!-- 3D MOCKUP -->
+  <div class="mockup-wrapper">
+    <div class="mockup">
+      <img src="https://i.ibb.co/3M4V5N5/sample-before-after.png" alt="Snaperase Background Remover Preview">
+    </div>
+  </div>
+
+</section>
+
+<footer>© 2025 Snaperase — All Rights Reserved</footer>
+
+<script>
+const input=document.getElementById("fileInput");
+input.addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  alert("Preview + API connect আমরা পরের ধাপে করব 🔥");
+});
+</script>
+
 </body>
 </html>
