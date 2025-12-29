@@ -1,49 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f172a" />
-
-    <title>Snaperase AI - 4K Background Remover & AI Upscaler</title>
-    <meta name="title" content="Snaperase AI - Best 4K Background Remover & AI Upscaler">
-    <meta name="description" content="Remove image backgrounds instantly in 4K quality with Snaperase AI. High-quality AI background removal tool for professional photos.">
-    <meta name="keywords" content="background remover, remove bg, 4k background remover, ai image editor, snaperase, snaperase pro, image upscaler bangladesh">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="English">
-    <meta name="author" content="Beb">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://snaperase.pro/">
-    <meta property="og:title" content="Snaperase AI - Professional BG Remover">
-    <meta property="og:description" content="Get studio-quality photos with 4K resolution. Try Snaperase AI for free now!">
-    <meta property="og:image" content="https://snaperase.pro/og-image.jpg">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://snaperase.pro/">
-    <meta property="twitter:title" content="Snaperase AI - 4K Background Remover">
-    <meta property="twitter:description" content="Remove backgrounds in seconds. High resolution guaranteed.">
-    <meta property="twitter:image" content="https://snaperase.pro/og-image.jpg">
-
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snaperase AI - 4K Background Remover</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
     <style>
-      body {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-      }
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: #0f172a; color: #fff; }
+        .hero { text-align: center; padding: 80px 20px; }
+        .btn-premium { background-color: #f59e0b; color: #000; padding: 15px 40px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+        .upload-area { max-width: 800px; margin: 0 auto 50px; padding: 60px; text-align: center; background: rgba(30, 41, 59, 0.5); border: 2px dashed #334155; border-radius: 30px; }
+        footer { background-color: #0f172a; color: #94a3b8; padding: 40px 20px; border-top: 1px solid #1e293b; text-align: center; margin-top: 50px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; alignItems: center; z-index: 1000; }
+        .modal-card { background: #fff; color: #1e293b; width: 90%; maxWidth: 450px; padding: 30px; border-radius: 25px; text-align: center; }
     </style>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+</head>
+<body>
     <div id="root"></div>
-    <script type="module" src="./index.js"></script>
-    </body>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            const [showPayment, setShowPayment] = useState(false);
+            const [isPremium, setIsPremium] = useState(false);
+
+            return (
+                <div>
+                    <div className="hero">
+                        <h1 style={{fontSize: '3.5rem', fontWeight: '800'}}>Snaperase AI</h1>
+                        <p style={{color: '#94a3b8'}}>{isPremium ? "🚀 PREMIUM ACTIVE (4K UNLOCKED)" : "Professional 4K Background Removal"}</p>
+                        {!isPremium && <button className="btn-premium" onClick={() => setShowPayment(true)}>Unlock 4K Premium</button>}
+                    </div>
+
+                    <div className="upload-area">
+                        <p style={{color: '#64748b'}}>Drag & Drop Image Here</p>
+                    </div>
+
+                    {showPayment && (
+                        <div className="modal-overlay">
+                            <div className="modal-card">
+                                <h2>Upgrade to Pro</h2>
+                                <p>Send 59 TK to: 01629586874</p>
+                                <input type="text" placeholder="Transaction ID" style={{width: '100%', padding: '12px', margin: '15px 0', borderRadius: '10px', border: '1px solid #ddd'}} />
+                                <button style={{width: '100%', padding: '12px', background: '#1e293b', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold'}} onClick={() => {alert('Success!'); setIsPremium(true); setShowPayment(false);}}>Confirm</button>
+                                <p style={{marginTop: '10px', cursor: 'pointer', color: '#94a3b8'}} onClick={() => setShowPayment(false)}>Close</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <footer>
+                        <p>© 2025 Snaperase AI. Managed by MD. RAYHAN ISLAM BAPPY</p>
+                        <p>Address: 333 no West rampura, Dhaka 1219, Bangladesh</p>
+                        <p>WhatsApp: +8801410802088 | Email: mdb79833@gmail.com</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
 </html>
