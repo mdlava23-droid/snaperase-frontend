@@ -1,175 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Snaperase — AI Background Remover</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Express Style - Background Remover</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Adobe+Clean:wght@400;700;900&family=Source+Sans+Pro:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --adobe-red: #FA0F00; --adobe-blue: #0265DC; --text-main: #2C2C2C; --bg-light: #F8F8F8; }
+        body { margin: 0; font-family: 'Source Sans Pro', sans-serif; background-color: #ffffff; color: var(--text-main); -webkit-font-smoothing: antialiased; }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        /* Adobe Navbar */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 40px; border-bottom: 1px solid #E1E1E1; position: sticky; top: 0; background: #fff; z-index: 1000; }
+        .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 1.5rem; text-decoration: none; color: var(--adobe-red); }
+        .nav-logo span { color: #000; font-weight: 700; font-size: 1.2rem; }
 
-<style>
-body{
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  background:radial-gradient(circle at top,#0a0a0f,#000);
-  color:white;
-}
+        /* Banner Section */
+        .hero-banner { display: flex; max-width: 1200px; margin: 60px auto; padding: 0 40px; align-items: center; gap: 60px; }
+        .hero-content { flex: 1; }
+        .hero-content h1 { font-size: 3.5rem; line-height: 1.1; font-weight: 900; margin: 0 0 20px; letter-spacing: -1.5px; }
+        .hero-content p { font-size: 1.3rem; line-height: 1.6; color: #4B4B4B; margin-bottom: 30px; }
 
-/* NAV */
-nav{display:flex;justify-content:space-between;padding:16px 40px;}
-.brand{font-size:22px;font-weight:700;}
-nav a{color:#cfcfcf;margin-left:18px;text-decoration:none}
+        /* Tool Area - 3D Layout */
+        .tool-wrapper { flex: 1; background: var(--bg-light); border-radius: 32px; padding: 60px 40px; border: 2px dashed #D5D5D5; position: relative; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .tool-wrapper:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.12); border-color: var(--adobe-blue); background: #fff; }
+        
+        .upload-trigger { position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .plus-icon { width: 80px; height: 80px; background: var(--adobe-blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 300; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(2, 101, 220, 0.3); }
+        .btn-browse { background: var(--adobe-blue); color: #fff; padding: 14px 40px; border-radius: 30px; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer; margin-top: 20px; transition: 0.2s; }
+        .btn-browse:hover { background: #014da8; }
+        
+        input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
 
-/* LAYOUT */
-.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;padding:70px 40px}
-.tag{color:#7dffe3;font-weight:600}
-h1{font-size:40px}
-.lead{color:#c9c9c9}
+        /* Preview Display */
+        .image-preview { width: 100%; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); margin-bottom: 25px; border: 4px solid #fff; }
 
-/* BUTTONS */
-.btn{padding:12px 22px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
-.primary{background:#00ffd5;color:#000}
-.outline{background:transparent;border:1px solid #4cffea;color:#4cffea}
+        /* Modal Adobe Quality */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(8px); }
+        .modal-box { background: #fff; width: 90%; max-width: 500px; padding: 45px; border-radius: 20px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.3); }
+        .download-btn { width: 100%; padding: 20px; border-radius: 14px; border: 1px solid #E1E1E1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; cursor: pointer; transition: 0.2s; }
+        .download-btn:hover { border-color: var(--adobe-blue); background: #F8FBFF; }
+        .download-btn.premium { border: 2.5px solid var(--adobe-red); background: #FFF9F9; }
 
-/* GLASS CARD */
-.upload-card{margin-top:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:14px;text-align:center}
-.preview-box{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.preview-box img{width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.15)}
-
-/* 3D MOCKUP */
-.mockup-wrapper{perspective:1200px;display:flex;justify-content:center}
-.mockup{
-  background:linear-gradient(145deg,#141426,#0a0a14);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:22px;
-  padding:28px;
-  width:340px;
-  transform-style:preserve-3d;
-  animation:rotate3d 6s ease-in-out infinite;
-  box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 40px #00ffd540;
-}
-@keyframes rotate3d{
-  0%{transform:rotateY(-18deg) rotateX(10deg)}
-  50%{transform:rotateY(-6deg) rotateX(4deg) scale(1.02)}
-  100%{transform:rotateY(-18deg) rotateX(10deg)}
-}
-.mockup img{width:100%;border-radius:14px}
-
-.download-btn{
-  margin-top:10px;
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  font-weight:600;
-  background:#00ffd5;
-  color:#000;
-  display:none;
-  cursor:pointer;
-}
-
-/* MOBILE */
-@media(max-width:900px){
- .hero{grid-template-columns:1fr}
- h1{font-size:32px}
-}
-</style>
+        /* Adobe Style Footer */
+        footer { background: #2C2C2C; color: #fff; padding: 80px 40px; margin-top: 100px; border-top: 8px solid var(--adobe-red); }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; text-align: left; }
+        .footer-bottom { border-top: 1px solid #444; margin-top: 50px; padding-top: 30px; font-size: 13px; color: #AAA; text-align: center; }
+    </style>
 </head>
-
 <body>
+    <div id="root"></div>
 
-<nav>
-  <div class="brand">Snaperase</div>
-  <div>
-    <a href="#">Features</a>
-    <a href="#">Pricing</a>
-    <a href="#">Contact</a>
-  </div>
-</nav>
+    <script type="text/babel">
+        const { useState } = React;
 
-<section class="hero">
+        const App = () => {
+            const [img, setImg] = useState(null);
+            const [modal, setModal] = useState(false);
+            const [pay, setPay] = useState(false);
 
-<!-- LEFT -->
-<div>
-  <span class="tag">AI Background Remover</span>
-  <h1>Remove Backgrounds in Seconds — High-Quality & Clean Output</h1>
-  <p class="lead">Upload an image and Snaperase will instantly remove the background using AI.</p>
+            const onUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) setImg(URL.createObjectURL(file));
+            };
 
-  <div class="buttons">
-    <button class="btn primary" onclick="fileInput.click()">Upload Image</button>
-    <button class="btn outline">Try Demo</button>
-  </div>
+            return (
+                <div>
+                    <nav>
+                        <a href="#" className="nav-logo">
+                            <div style={{width: 24, height: 24, background: 'var(--adobe-red)', borderRadius: '4px'}}></div>
+                            <span>Snaperase AI</span>
+                        </a>
+                        <div style={{fontWeight: 700, fontSize: '14px', color: '#666'}}>Beb, Welcome!</div>
+                    </nav>
 
-  <div class="upload-card">
-    <p>Upload an image to see Before → After preview</p>
-    <input type="file" id="fileInput" accept="image/*"/>
+                    <div className="hero-banner">
+                        <div className="hero-content">
+                            <h1>Remove backgrounds in seconds.</h1>
+                            <p>Highlight your subject with the Snaperase AI background remover. Create a transparent background for PNGs or add a new backdrop instantly. High quality, zero effort.</p>
+                            <div style={{display: 'flex', gap: '15px'}}>
+                                <span style={{fontWeight: 700}}>✓ Free to use</span>
+                                <span style={{fontWeight: 700}}>✓ AI Powered</span>
+                            </div>
+                        </div>
 
-    <div class="preview-box">
-      <img id="beforeImg" src="" alt="Before Preview">
-      <img id="afterImg" src="" alt="After Preview">
-    </div>
+                        <div className="tool-wrapper">
+                            {!img ? (
+                                <div className="upload-trigger">
+                                    <input type="file" accept="image/*" onChange={onUpload} />
+                                    <div className="plus-icon">+</div>
+                                    <h2 style={{margin: '0', fontSize: '1.8rem', fontWeight: 900}}>Upload your photo</h2>
+                                    <p style={{color: '#666', marginTop: '10px'}}>Or drag and drop an image</p>
+                                    <button className="btn-browse">Browse on device</button>
+                                </div>
+                            ) : (
+                                <div style={{textAlign: 'center'}}>
+                                    <img src={img} className="image-preview" alt="Preview" />
+                                    <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                                        <button className="btn-browse" onClick={() => setModal(true)}>Download Image</button>
+                                        <button style={{background: '#E1E1E1', color: '#000', padding: '15px 30px', borderRadius: '30px', border: 'none', fontWeight: '700', cursor: 'pointer'}} onClick={() => setImg(null)}>Remove another</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-    <button id="downloadBtn" class="download-btn">Download Result</button>
-  </div>
-</div>
+                    {modal && (
+                        <div className="modal-overlay">
+                            <div className="modal-box">
+                                <h2 style={{fontSize: '2rem', fontWeight: 900, marginBottom: '10px'}}>Ready to download?</h2>
+                                <p style={{color: '#666', marginBottom: '35px'}}>Choose your preferred resolution.</p>
+                                
+                                <button className="download-btn" onClick={() => alert('Downloading Standard Quality...')}>
+                                    <div style={{textAlign: 'left'}}>
+                                        <div style={{fontWeight: 800}}>Standard Quality</div>
+                                        <div style={{fontSize: '12px', color: '#666'}}>Fast download with Ads</div>
+                                    </div>
+                                    <div style={{color: var(--adobe-blue), fontWeight: 900}}>FREE</div>
+                                </button>
 
-<!-- RIGHT 3D MOCKUP -->
-<div class="mockup-wrapper">
-  <div class="mockup">
-    <img id="mockupImg" src="https://i.ibb.co/3M4V5N5/sample-before-after.png">
-  </div>
-</div>
+                                <button className="download-btn premium" onClick={() => setPay(true)}>
+                                    <div style={{textAlign: 'left'}}>
+                                        <div style={{fontWeight: 800}}>4K Ultra AI Quality</div>
+                                        <div style={{fontSize: '12px', color: '#666'}}>High resolution + Precision edges</div>
+                                    </div>
+                                    <div style={{color: var(--adobe-red), fontWeight: 900}}>PRO</div>
+                                </button>
+                                
+                                <button style={{marginTop: '25px', background: 'none', border: 'none', fontWeight: 700, color: '#666', cursor: 'pointer'}} onClick={() => setModal(false)}>Close</button>
+                            </div>
+                        </div>
+                    )}
 
-</section>
+                    {pay && (
+                        <div className="modal-overlay">
+                            <div className="modal-box">
+                                <div style={{fontSize: '50px', marginBottom: '15px'}}>👑</div>
+                                <h2 style={{fontWeight: 900}}>Unlock 4K Access</h2>
+                                <p style={{lineHeight: 1.6, color: '#444'}}>Send <b>59 TK</b> to <b>01629586874</b> (bKash/Nagad) to enjoy unlimited 4K downloads for 30 days.</p>
+                                <input type="text" placeholder="Transaction ID" style={{width: '100%', padding: '18px', margin: '20px 0', borderRadius: '10px', border: '1px solid #D5D5D5', fontSize: '16px', boxSizing: 'border-box'}} />
+                                <button className="btn-browse" style={{width: '100%', borderRadius: '10px'}} onClick={() => {alert('Payment submitted!'); setPay(false);}}>Confirm Activation</button>
+                                <button style={{marginTop: '15px', border: 'none', background: 'none', color: '#666', cursor: 'pointer'}} onClick={() => setPay(false)}>Go back</button>
+                            </div>
+                        </div>
+                    )}
 
-<footer style="text-align:center;margin:50px 0;color:#777">© 2025 Snaperase</footer>
+                    <footer>
+                        <div className="footer-grid">
+                            <div>
+                                <h2 style={{color: var(--adobe-red), fontWeight: 900, fontSize: '1.8rem'}}>Snaperase AI</h2>
+                                <p style={{color: '#AAA'}}>The world's fastest AI-powered background removal tool. Professional results, simplified.</p>
+                            </div>
+                            <div>
+                                <h4 style={{marginBottom: '20px'}}>Contact</h4>
+                                <p style={{color: '#AAA', fontSize: '14px'}}>+8801410802088<br/>mdb79833@gmail.com</p>
+                            </div>
+                            <div>
+                                <h4 style={{marginBottom: '20px'}}>Office</h4>
+                                <p style={{color: '#AAA', fontSize: '14px'}}>333 no West rampura,<br/>Dhaka 1219, Bangladesh</p>
+                            </div>
+                        </div>
+                        <div className="footer-bottom">
+                            © 2025 Snaperase AI. All rights reserved. Managed by MD. RAYHAN ISLAM BAPPY
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
 
-<script>
-const fileInput=document.getElementById("fileInput");
-const beforeImg=document.getElementById("beforeImg");
-const afterImg=document.getElementById("afterImg");
-const mockupImg=document.getElementById("mockupImg");
-const downloadBtn=document.getElementById("downloadBtn");
-let resultBlobUrl=null;
-
-fileInput.addEventListener("change",async e=>{
-  const file=e.target.files[0];
-  if(!file) return;
-
-  // show before preview
-  const localUrl=URL.createObjectURL(file);
-  beforeImg.src=localUrl;
-  mockupImg.src=localUrl;
-
-  const formData=new FormData();
-  formData.append("image",file);
-
-  try{
-    // ⬇⬇ এখানে তোমার API URL বসাও
-    const res=await fetch("https://YOUR-BACKEND-URL/remove-bg",{
-      method:"POST",
-      body:formData
-    });
-
-    const blob=await res.blob();
-    resultBlobUrl=URL.createObjectURL(blob);
-
-    afterImg.src=resultBlobUrl;
-    downloadBtn.style.display="block";
-
-  }catch(err){
-    alert("API error — পরে আবার চেষ্টা করো");
-    console.log(err);
-  }
-});
-
-downloadBtn.onclick=()=>{ 
-  const a=document.createElement("a");
-  a.href=resultBlobUrl;
-  a.download="snaperase-output.png";
-  a.click();
-};
-</script>
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
